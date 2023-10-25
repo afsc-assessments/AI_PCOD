@@ -27,7 +27,7 @@
 1 #_env/block/dev_adjust_method for all time-vary parms (1=warn relative to base parm bounds; 3=no bound check)
 #
 # AUTOGEN
-1 1 1 1 1 # autogen: 1st element for biology, 2nd for SR, 3rd for Q, 4th reserved, 5th for selex
+0 1 1 1 0 # autogen: 1st element for biology, 2nd for SR, 3rd for Q, 4th reserved, 5th for selex
 # where: 0 = autogen all time-varying parms; 1 = read each time-varying parm line; 2 = read then autogen if parm min==-12345
 #
 # setup for M, growth, maturity, fecundity, recruitment distibution, movement
@@ -50,10 +50,10 @@
 #
 #_growth_parms
 #_LO	HI	INIT	PRIOR	PR_SD	PR_type	PHASE	env_var&link	dev_link	dev_minyr	dev_maxyr	dev_PH	Block	Block_Fxn
-  0.1	     1.5	 0.366248	   0.36	  0.4	0	  2	0	0	   0	   0	0	0	0	#_NatM_p_1_Fem_GP_1  
-  -10	      50	   17.744	   -999	 -999	0	  2	0	0	   0	   0	0	0	0	#_L_at_Amin_Fem_GP_1 
-   70	     145	  116.282	  123.8	0.015	0	  2	0	0	   0	   0	0	0	0	#_L_at_Amax_Fem_GP_1 
-    0	       1	 0.193498	 0.1645	 0.03	0	  2	0	0	1991	2022	5	1	1	#_VonBert_K_Fem_GP_1 
+  0.1	     1.5	 0.367372	   0.36	  0.4	0	  2	0	0	   0	   0	0	0	0	#_NatM_p_1_Fem_GP_1  
+  -10	      50	   17.752	   -999	 -999	0	  2	0	0	   0	   0	0	0	0	#_L_at_Amin_Fem_GP_1 
+   70	     145	  116.307	  123.8	0.015	0	  2	0	0	   0	   0	0	0	0	#_L_at_Amax_Fem_GP_1 
+    0	       1	  0.19574	 0.1645	 0.03	0	  2	0	0	1991	2022	5	1	1	#_VonBert_K_Fem_GP_1 
  0.01	     0.4	      0.2	      0	    0	0	 -2	0	0	   0	   0	0	0	0	#_CV_young_Fem_GP_1  
  0.01	     0.2	     0.06	      0	    0	0	 -2	0	0	   0	   0	0	0	0	#_CV_old_Fem_GP_1    
   -99	      99	5.611e-06	      0	    0	0	 -1	0	0	   0	   0	0	0	0	#_Wtlen_1_Fem_GP_1   
@@ -71,12 +71,7 @@
   -10	      10	     1.16	      0	    0	0	 -1	0	0	   0	   0	0	0	0	#_AgeKeyParm6        
   -10	      10	        0	      0	    0	0	 -1	0	0	   0	   0	0	0	0	#_AgeKeyParm7        
 1e-06	0.999999	      0.5	    0.5	  0.5	0	-99	0	0	   0	   0	0	0	0	#_FracFemale_GP_1    
-#_timevary MG parameters
-#_LO	HI	INIT	PRIOR	PR_SD	PR_type	PHASE
--0.193165	0.806835	 0.00369272	0	0.25	6	4	#_VonBert_K_Fem_GP_1_BLK1add_1991
--0.193165	0.806835	0.000780983	0	0.25	6	4	#_VonBert_K_Fem_GP_1_BLK1add_2004
--0.193165	0.806835	-0.00447302	0	0.25	6	4	#_VonBert_K_Fem_GP_1_BLK1add_2018
-# info on dev vectors created for MGparms are reported with other devs after tag parameter section
+#_no timevary MG parameters
 #
 #_seasonal_effects_on_biology_parms
 0 0 0 0 0 0 0 0 0 0 #_femwtlen1,femwtlen2,mat1,mat2,fec1,fec2,Malewtlen1,malewtlen2,L1,K
@@ -87,7 +82,7 @@
 0 # 0/1 to use steepness in initial equ recruitment calculation
 0 # future feature: 0/1 to make realized sigmaR a function of SR curvature
 #_LO	HI	INIT	PRIOR	PR_SD	PR_type	PHASE	env-var	use_dev	dev_mnyr	dev_mxyr	dev_PH	Block	Blk_Fxn # parm_name
-  1	20	10.2252	 10.3	0	0	 1	0	0	0	0	0	0	0	#_SR_LN(R0)  
+  1	20	10.2314	 10.3	0	0	 1	0	0	0	0	0	0	0	#_SR_LN(R0)  
   0	 1	      1	    1	0	0	-1	0	0	0	0	0	0	0	#_SR_BH_steep
   0	10	  0.636	0.636	0	0	-1	0	0	0	0	0	0	0	#_SR_sigmaR  
  -5	 5	      0	    0	0	0	-3	0	0	0	0	0	0	0	#_SR_regime  
@@ -132,7 +127,7 @@
 -9999	0	0	0	0	0	#_terminator
 #_Q_parms(if_any);Qunits_are_ln(q)
 #_LO	HI	INIT	PRIOR	PR_SD	PR_type	PHASE	env-var	use_dev	dev_mnyr	dev_mxyr	dev_PH	Block	Blk_Fxn  #  parm_name
--10	10	-0.00237646	0	0.01	6	10	0	0	1990	2022	1	0	0	#_LnQ_base_Srv(2)
+-10	10	-0.00238082	0	0.01	6	10	0	0	1990	2022	1	0	0	#_LnQ_base_Srv(2)
 #_no timevary Q parameters
 #
 #_size_selex_patterns
@@ -147,37 +142,21 @@
 #
 #_SizeSelex
 #_LO	HI	INIT	PRIOR	PR_SD	PR_type	PHASE	env-var	use_dev	dev_mnyr	dev_mxyr	dev_PH	Block	Blk_Fxn  #  parm_name
-   40	    115	  105.026	   85	0.001	0	 4	0	1	1991	2023	6	2	1	#_SizeSel_P_1_FshComb(1)
-  -20	     10	  1.74733	   25	0.001	0	 4	0	0	   0	   0	0	0	0	#_SizeSel_P_2_FshComb(1)
-  -10	     10	  6.82748	    3	0.001	0	 4	0	1	1991	2023	6	2	1	#_SizeSel_P_3_FshComb(1)
+   40	    115	       85	   85	0.001	0	 4	0	0	   0	   0	0	0	0	#_SizeSel_P_1_FshComb(1)
+  -20	     10	   9.6158	   25	0.001	0	 4	0	0	   0	   0	0	0	0	#_SizeSel_P_2_FshComb(1)
+  -10	     10	  6.85033	    3	0.001	0	 4	0	1	1991	2023	6	2	1	#_SizeSel_P_3_FshComb(1)
   -10	     10	-0.838869	   10	0.001	0	-3	0	0	   0	   0	0	0	0	#_SizeSel_P_4_FshComb(1)
 -1000	2.71828	     -8.9	 -999	0.001	0	-3	0	0	   0	   0	0	0	0	#_SizeSel_P_5_FshComb(1)
   -10	     10	        4	    4	0.001	0	-3	0	0	   0	   0	0	0	0	#_SizeSel_P_6_FshComb(1)
-   10	     90	  58.8541	 58.1	0.001	0	 3	0	0	   0	   0	0	0	0	#_SizeSel_P_1_Srv(2)    
+   10	     90	     58.1	 58.1	0.001	0	 3	0	0	   0	   0	0	0	0	#_SizeSel_P_1_Srv(2)    
   -20	     10	    -3.05	-3.05	0.001	0	-3	0	0	   0	   0	0	0	0	#_SizeSel_P_2_Srv(2)    
-  -10	     10	  5.70205	 5.76	0.001	0	 3	0	0	   0	   0	0	0	0	#_SizeSel_P_3_Srv(2)    
+  -10	     10	     5.76	 5.76	0.001	0	 3	0	0	   0	   0	0	0	0	#_SizeSel_P_3_Srv(2)    
     0	     10	     3.98	 3.98	0.001	0	-3	0	0	   0	   0	0	0	0	#_SizeSel_P_4_Srv(2)    
   -12	2.71828	    -2.35	-2.35	0.001	0	-3	0	0	   0	   0	0	0	0	#_SizeSel_P_5_Srv(2)    
   -10	     10	       10	   10	0.001	0	-3	0	0	   0	   0	0	0	0	#_SizeSel_P_6_Srv(2)    
 #_AgeSelex
 #_No age_selex_parm
-# timevary selex parameters 
-#_LO	HI	INIT	PRIOR	PR_SD	PR_type	PHASE
-     -45	     30	  -3.06653	  0	  1	6	-6	#_SizeSel_P_1_FshComb(1)_BLK2add_1991
-     -45	     30	       4.5	  0	  1	6	-6	#_SizeSel_P_1_FshComb(1)_BLK2add_2003
-     -45	     30	    2.8565	  0	  1	6	-6	#_SizeSel_P_1_FshComb(1)_BLK2add_2013
-     -45	     30	  -1.52023	  0	  1	6	-6	#_SizeSel_P_1_FshComb(1)_BLK2add_2017
-     -45	     30	  -9.03854	  0	  1	6	-6	#_SizeSel_P_1_FshComb(1)_BLK2add_2020
-   1e-04	      2	       0.5	0.5	0.5	6	-5	#_SizeSel_P_1_FshComb(1)_dev_se      
-   -0.99	   0.99	         0	  0	0.5	6	-6	#_SizeSel_P_1_FshComb(1)_dev_autocorr
--16.8565	3.14352	 -0.117784	  0	  5	6	 4	#_SizeSel_P_3_FshComb(1)_BLK2add_1991
--16.8565	3.14352	   0.33349	  0	  5	6	 4	#_SizeSel_P_3_FshComb(1)_BLK2add_2003
--16.8565	3.14352	-0.0478856	  0	  5	6	 4	#_SizeSel_P_3_FshComb(1)_BLK2add_2013
--16.8565	3.14352	-0.0991449	  0	  5	6	 4	#_SizeSel_P_3_FshComb(1)_BLK2add_2017
--16.8565	3.14352	 -0.928959	  0	  5	6	 4	#_SizeSel_P_3_FshComb(1)_BLK2add_2020
-   1e-04	      2	       0.5	0.5	0.5	6	-5	#_SizeSel_P_3_FshComb(1)_dev_se      
-   -0.99	   0.99	         0	  0	0.5	6	-6	#_SizeSel_P_3_FshComb(1)_dev_autocorr
-# info on dev vectors created for selex parms are reported with other devs after tag parameter section
+#_no timevary selex parameters
 #
 0 #  use 2D_AR1 selectivity(0/1):  experimental feature
 #_no 2D_AR1 selex offset used
