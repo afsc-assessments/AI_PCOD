@@ -1,0 +1,4 @@
+#Data_type Fleet New_Var_adj hash Old_Var_adj New_Francis New_MI Francis_mult Francis_lo Francis_hi MI_mult Type Name Note
+4 1 0.046046 # 0.046046 0.043206 0.570083 0.938327 0.674302 1.518907 12.38072 len FshComb 
+4 2 0.102487 # 0.102487 0.106765 0.518084 1.041744 0.663571 2.625678 5.055121 len Srv 
+5 2 1.04334 # 1.04334 1.04947 1.220062 1.005875 0.67853 2.552147 1.169381 age Srv 
