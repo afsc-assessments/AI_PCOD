@@ -1,0 +1,120 @@
+---
+title: "2023 AI Pacific Cod Forecasting"
+author: "Maia S Kapur"
+date: "2023-11-17"
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+```{r, echo = FALSE, include = FALSE}
+require(here)
+require(dplyr)
+```
+
+This document describes the analyses performed to produce 15-year
+projections ('forecasts') for three Aleutian Islands Pacific Cod Stock
+assessments presented to the Groundfish Plan Team in November 2023. I
+discuss the rationale
+
+The basic models used herein are as follows. I also describe what was
+indicated in the *original* forecast file included with each model,
+which was passed to the scenario-building routine and presented to the
+GPT.
+
+The following table summarizes the model alternatives and forecast file
+specifications presented to the GPT in November.
+
+| Model              | Description                                                                | Reference Points                                                                   | Forecast Pars                        | Note                                                                                                                                    |
+|-----------|-----------------|------------------|------------------|---------|
+| 23.0a              | Time blocks on K in 2003 and 2017                                          | Biology and selectivity averaged throughout time period for ref-point calculation. | Selectivity averaged from 2000-2019. | Inappropriate to average growth, though curves nearly identical across blocks. No need to average selectivity.                          |
+| 23.0b              | As 23.0a, with time blocks on fishery selex in 2002, 2012, 2016, and 2019. | as above                                                                           | as above                             | Inconsistency between ref-point and forecasting selex; inappropriate to average growth (though growth & selex curves nearly identical). |
+| 23.0c - Base Model | Time block on K in 2003, time block on M in 2015                           | as above                                                                           | as above                             | Inappropriate to average demographic rates for forecasting                                                                              |
+
+\newline
+
+Here's what the *original* projection trajectories looked like (i.e.,
+Scenario 1):
+
+```{r, echo = FALSE, fig.cap = "Figure 1. SSB Trajectories of models with original forecast file."}
+knitr::include_graphics(here('2023','figs','original_nov_models_compare','compare2_spawnbio_uncertainty.png'))
+```
+
+# Updating the SS Forecast file
+
+The original approach averaged quantities (demographic and selectivity)
+across many blocks, and also had some inconsistency between the year
+ranges used for reference points and forecasted parameters.
+
+*Averaging* across time blocks is unnecessary in certain cases (i.e.
+model 23.0a does not have time-varying selectivity, so no averaging is
+needed) and inappropriate in others (forecasts should represent what we
+reasonably expect to happen in the future, which is probably most
+similar to the present [versus an average of the past]). This is an
+issue for all models (since they all have time-varying quantities) but
+moreso for 23.0c since $M$ varies so greatly across time blocks,
+discussed below.
+
+Specifying *different* time periods for the reference points and
+forecasted values produces confusion when comparing trajectories with
+targets. This is an issue for M23.0b, since the selectivity is averaged
+across all years for the reference points and only from 2000-2019 for
+forecasting. (This means that the target $F$ is calculated on a
+different selectivity than the population experiences during the
+forecast period).
+
+For these reasons, my proposal is to instead use the terminal value for
+all quantities.
+
+In the forecast file itself, this is represented as follows: \newline
+`#_Bmark_years`
+
+`0 0 0 0 0 0 0 0 0 0`
+
+`#_Fcast_years:`
+
+`0 0 0 0 -999 0`
+
+Do note that *for this model*, only the first four values in
+"Bmark_years" and first two values of "Fcast_years" are used, because
+this model does not have multiple fishing fleets (thus no `relF`, no
+movement (thus no `recr_dist` nor `recruits` arguments), and no
+stock-recruit relationship.
+
+## Impacts on Projections (Scenario 1)
+
+The base model 23.0c has a high terminal value of $M$:
+
+```{r, echo = FALSE, out.width=  '50%', out.height = '50%', fig.cap="Figure 2. Time-varying natural mortailty in M23.0c."}
+knitr::include_graphics(here('2023','model_runs','M23.0c','plots','bio24_time-varying_NatM_uniform_Fem_GP_1.png'))
+```
+
+The plot below shows the impact (on SSB) of changing the forecast file
+to only consider the terminal year for demography and selectivity when
+calculating reference points and parameterizing forecasts.
+
+```{r, echo = FALSE, fig.cap = "Figure 3. Comparison of spawning biomass trajectories using original forecasting method, and forecasting method that only considers the terminal year for reference points and parameter values."}
+knitr::include_graphics(here('2023','figs','new_forecast_compare','compare2_spawnbio_uncertainty.png'))
+```
+
+The impact of this change less apparent for the first four models
+because growth and selectivity are not very different among time blocks
+-- in fact, they are hardly distinguishable:
+
+```{r, echo = FALSE, out.width = "50%", out.height = "50%", fig.cap = 'Figure 4. Time-varying Growth in M23.0a. '}
+knitr::include_graphics(here('2023','model_runs','M23.0a','plots','bio22_timevarygrowthsurf_sex1.png'))
+
+```
+
+```{r, echo = FALSE, out.width = "50%", out.height = "50%",fig.cap = "Figure 5. Time-varying fishery selectivity in M23.0b."}
+knitr::include_graphics(here('2023','model_runs','M23.0b','plots','sel03_len_timevary_surf_flt1sex1.png'))
+
+```
+
+# Harvest Scenarios for 23.0c
+
+
+
