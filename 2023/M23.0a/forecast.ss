@@ -3,23 +3,23 @@
 #C should work with SS version: 3.3
 #C file write time: 2023-11-06 17:06:55.783566
 #
-1 #_benchmarks
-1 #_MSY
+1  # Benchmarks: 0=skip; 1=calc F_spr,F_btgt,F_msy; 2=calc F_spr,F0.1,F_msy 
+1 # MSY: 1= set to F(SPR); 2=calc F(MSY); 3=set to F(Btgt) or F0.1; 4=set to F(endyr) 
 0.4 #_SPRtarget
 0.35 #_Btarget
 #_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF,  beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)
 1991 2019 1991 2019 1991 2021 1991 2019 1991 2019
-1 #_Bmark_relF_Basis
-1 #_Forecast
+1 #Bmark_relF_Basis: 1 = use year range; 2 = set relF same as forecast below
+1 # Forecast: 0=none; 1=F(SPR); 2=F(MSY) 3=F(Btgt) or F0.1; 4=Ave F (uses first-last relF yrs); 5=input annual F scalar
 15 #_Nforecastyrs
 0 #_F_scalar
 #_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits (enter actual year, or values of 0 or -integer to be rel. endyr)
 2000 2019 2016 2021 1991 2019
-0 #_Fcast_selex
-2 #_ControlRuleMethod
-0.4 #_BforconstantF
-0.175 #_BfornoF
-1 #_Flimitfraction
+0 # Forecast selectivity (0=fcast selex is mean from year range; 1=fcast selectivity from annual time-vary parms)
+2 # Control rule method (1: ramp does catch=f(SSB), buffer on F; 2: ramp does F=f(SSB), buffer on F; 3: ramp does catch=f(SSB), buffer on catch; 4: ramp does F=f(SSB), buffer on catch) 
+0.4 # Control rule Biomass level for constant F (as frac of Bzero, e.g. 0.40); (Must be > the no F level below) 
+0.175 # Control rule Biomass level for no F (as frac of Bzero, e.g. 0.10) 
+1 # Control rule target as fraction of Flimit (e.g. 0.75), negative value invokes list of [year, scalar] with filling from year to YrMax 
 3 #_N_forecast_loops
 3 #_First_forecast_loop_with_stochastic_recruitment
 0 #_fcast_rec_option
