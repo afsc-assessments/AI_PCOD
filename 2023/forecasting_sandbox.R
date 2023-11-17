@@ -16,4 +16,11 @@ require(r4ss)
 # shell('ss')
 
 mod230a <- SS_output(here('2023','m23.0a'))
-SS_plots(mod230a)
+SS_plots(mod230a) 
+
+## looking in the control file, it doesn't appear that tv selex was implemented here
+mod230b <- SS_output(here('2023','m23.0b'))
+SS_plots(mod230b)
+
+mod230c <- SS_output(here('2023','m23.0c'))
+SS_plots(mod230c)
