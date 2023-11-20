@@ -2,7 +2,7 @@
 ## ALASKA PROJECTION SCENARIOS FOR STOCK SYNTHESIS 3 
 ## Version October 7, 2021
 ## Created by Steve Barbeaux E-mail: steve.barbeaux@noaa.gov  Phone: (206) 729-0871 
-## 
+## edited by M Kapur maia.kapur@noaa.gov 16 Nov 2023
 ##
 ## In the starter.ss file you should change it to read from the converged .par file 
 ##   1 # 0=use init values in control file; 1=use ss.par
@@ -19,44 +19,32 @@
 ## do_fig whether to plot figures
 ##
 ##
+require(data.table)
+require(ggplot2)
+require(here)
+require(r4ss)
 
-#SS3 models
-Dir_M23_0a=("/Users/ingrid.spies/Documents/AI_PCOD/November Models/Sensitivity_Anal/M23.0a/M23_0a")
-Dir_M23_0ar=file.path(Dir_M23_0a,'run')
-Dir_M23_0b=("/Users/ingrid.spies/Documents/AI_PCOD/November Models/Sensitivity_Anal/M23.0b/M23_0b")
-Dir_M23_0br=file.path(Dir_M23_0b,'run')
-Dir_M23_0c=("/Users/ingrid.spies/Documents/AI_PCOD/November Models/Sensitivity_Anal/M23.0c/M23_0c")
-Dir_M23_0cr=file.path(Dir_M23_0c,'run')
-
-M23_0 <- SS_output(Dir_M23_0ar)
-
-M23_1 <- SS_output(Dir_M23_0br)
-
-M23_2 <- SS_output(Dir_M23_0cr)
 
 Do_AK_Scenarios<-function(DIR,CYR=2023,SYR=1991,FCASTY=13,SEXES=1,FLEETS=1,Scenario2=1,S2_F=0.4,do_fig=TRUE){
   
-  require(r4ss)
-  require(data.table)
-  require(ggplot2)
-  require(R.utils)
+ 
   
   setwd(DIR) ## folder with converged model setwd(Dir_M23_0ar)
   
   scenario_1 <- SS_readforecast(file = "forecast.ss")
   
-  copyDirectory(getwd(),paste0(getwd(),"/scenario_1"),recursive=FALSE)
-  scenario_1$Btarget   <- 0.4
-  scenario_1$SPRtarget <- 0.4
-  scenario_1$Flimitfraction <- 1.0
+  R.utils::copyDirectory(DIR,paste0(DIR,"/scenario_1"),recursive=FALSE)
+  scenario_1$Btarget   <- 0.4 ## this doesn't affect outcomes, just horizontal line on plot
+  # scenario_1$SPRtarget <- 0.4
+  # scenario_1$Flimitfraction <- 1.0
   #scenario_1$Bmark_years[1:2]=c(1991,2023)#uses base M 0.404237
-  scenario_1$Bmark_years[1:2]=c(2004,2023)#
+  # scenario_1$Bmark_years[1:2]=c(2004,2023)#
   #scenario_1$Fcast_years=rep(c(2021,2023),3)
   SS_writeforecast(scenario_1, dir = paste0(getwd(),"/scenario_1"), file = "forecast.ss", writeAll = TRUE, overwrite = TRUE)
   
   
   scenario_2 <- scenario_1
-  copyDirectory(getwd(),paste0(getwd(),"/scenario_2"),recursive=FALSE)
+  R.utils::copyDirectory(DIR,paste0(DIR,"/scenario_2"),recursive=FALSE)
   
   if(Scenario2==2){
     scenario_2$SPRtarget <- S2_F
@@ -65,11 +53,11 @@ Do_AK_Scenarios<-function(DIR,CYR=2023,SYR=1991,FCASTY=13,SEXES=1,FLEETS=1,Scena
   if(Scenario2==3){
     scenario_2$ForeCatch <- read.csv("Scenario2_catch.csv",header=T)
   }
-  SS_writeforecast(scenario_2, dir = paste0(getwd(),"/scenario_2"), file = "forecast.ss", writeAll = TRUE, overwrite = TRUE)
+  SS_writeforecast(scenario_2, dir = paste0(DIR,"/scenario_2"), file = "forecast.ss", writeAll = TRUE, overwrite = TRUE)
   
   ## Average f for previous 5 years  cyear=year(Sys.Date()) 
   scenario_3<-scenario_1
-  copyDirectory(getwd(),paste0(getwd(),"/scenario_3"),recursive=FALSE)
+  R.utils::copyDirectory(DIR,paste0(DIR,"/scenario_3"),recursive=FALSE)
   scenario_3$Forecast<-4
   scenario_3$Fcast_years [c(3,4)]<-c(CYR-5, CYR-1)
   
@@ -77,8 +65,8 @@ Do_AK_Scenarios<-function(DIR,CYR=2023,SYR=1991,FCASTY=13,SEXES=1,FLEETS=1,Scena
   
   #F75%
   scenario_4<-scenario_1
-  copyDirectory(getwd(),paste0(getwd(),"/scenario_4"),recursive=FALSE)
-  scenario_4$Btarget <- 0.75
+  R.utils::copyDirectory(getwd(),paste0(getwd(),"/scenario_4"),recursive=FALSE)
+  # scenario_4$Btarget <- 0.75
   scenario_4$SPRtarget <- 0.75
   
   #F1=mods1$derived_quants$Value[which(M23_2$derived_quants$Label=="F_2018")]
@@ -96,7 +84,7 @@ Do_AK_Scenarios<-function(DIR,CYR=2023,SYR=1991,FCASTY=13,SEXES=1,FLEETS=1,Scena
   
   #F=0
   scenario_5<-scenario_1
-  copyDirectory(getwd(),paste0(getwd(),"/scenario_5"),recursive=FALSE)
+  R.utils::copyDirectory(getwd(),paste0(getwd(),"/scenario_5"),recursive=FALSE)
   ## must enter a 0 in for all fisheries
   catch <- expand.grid(Year=c((CYR+1):(CYR+FCASTY)),Seas=1,Fleet=FLEETS,Catch_or_F=0)
   names(catch)<-names(scenario_5$ForeCatch)
@@ -106,38 +94,43 @@ Do_AK_Scenarios<-function(DIR,CYR=2023,SYR=1991,FCASTY=13,SEXES=1,FLEETS=1,Scena
   
   ## Fofl = F35% for all years
   scenario_6<-scenario_1
-  copyDirectory(getwd(),paste0(getwd(),"/scenario_6"),recursive=FALSE)
-  scenario_6$Btarget   <- 0.35
+  R.utils::copyDirectory(getwd(),paste0(getwd(),"/scenario_6"),recursive=FALSE)
+  # scenario_6$Btarget   <- 0.35
   scenario_6$SPRtarget <- 0.35
   #scenario_4$BforconstantF <- 0.4
-  scenario_6$Flimitfraction <- 1.0
+  # scenario_6$Flimitfraction <- 1.0
   SS_writeforecast(scenario_6, dir = paste0(getwd(),"/scenario_6"), file = "forecast.ss", writeAll = TRUE, overwrite = TRUE)
   
   ## F40%=Fabc for 20&21 and Fofl for all further years
   
   scenario_7<-scenario_6
-  copyDirectory(getwd(),paste0(getwd(),"/scenario_7"),recursive=FALSE)
+  R.utils::copyDirectory(getwd(),paste0(getwd(),"/scenario_7"),recursive=FALSE)
   x<-SS_output(dir=paste0(getwd(),"/scenario_1"))
-  scenario_7$ForeCatch<-SS_ForeCatch(x,yrs=CYR:(CYR+2))
+  scenario_7$ForeCatch<-SS_ForeCatch(x,yrs=CYR:(CYR+2)) ## USE ABC-DERIVED CATCHES FOR FIRST TWO YEARS
   SS_writeforecast(scenario_7, dir = paste0(getwd(),"/scenario_7"), file = "forecast.ss", writeAll = TRUE, overwrite = TRUE)
   
   ## for calculating OFL values for Yr+2 F40% for 20 & Fofl for all further years
   scenario_8<-scenario_6
-  copyDirectory(getwd(),paste0(getwd(),"/scenario_8"),recursive=FALSE)
+  R.utils::copyDirectory(getwd(),paste0(getwd(),"/scenario_8"),recursive=FALSE)
   x<-SS_output(dir=paste0(getwd(),"/scenario_1"))
   scenario_8$ForeCatch<-SS_ForeCatch(x,yrs=CYR:(CYR+1))
   SS_writeforecast(scenario_8, dir = paste0(getwd(),"/scenario_8"), file = "forecast.ss", writeAll = TRUE, overwrite = TRUE)
   
   ## run all the scenarios
-  scen<-c("scenario_1","scenario_2","scenario_3","scenario_4","scenario_5","scenario_6","scenario_7","scenario_8")
-  
-  Exe_path <- "/Users/ingrid.spies/Documents/AI_PCOD/Executables/SS_V3_30_21/ss_osx"
-
+  # scen<-c("scenario_1","scenario_2","scenario_3","scenario_4","scenario_5","scenario_6","scenario_7","scenario_8")
+  scen <- paste0('scenario_',1:8)
+  # Exe_path <- "/Users/ingrid.spies/Documents/AI_PCOD/Executables/SS_V3_30_21/ss_osx"
+  Exe_path <- here('2023','ss.exe')
   for(i in 1:8){
     file.copy(Exe_path,file.path(DIR,paste0(scen[i])))
     setwd(paste0(DIR,"/",scen[i]))
-    system("./ss_osx")
+    shell('ss')
+    # system("./ss_osx")
   }
+  
+} ## end do ak scenarios
+
+write_ak_scenarios <- function(DIR){
   if(SEXES==1) sex=2
 #  if(SEXES>1) sex=1
   setwd(DIR)
@@ -150,8 +143,8 @@ Do_AK_Scenarios<-function(DIR,CYR=2023,SYR=1991,FCASTY=13,SEXES=1,FLEETS=1,Scena
   yr1<- EYR-SYR+3
   
   for(i in 1:8){
-    summ[[i]]<-data.table(Yr=SYR:EYR,TOT=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$Bio_all,SUMM=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$Bio_smry,SSB=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$SpawnBio/sex,std=data.table(mods1[[i]]$stdtable)[name%like%"SSB"][3:yr1,]$std/sex,F=data.table(mods1[[i]]$sprseries)[Yr%in%c(SYR:EYR)]$F_report,Catch=data.table(mods1[[i]]$sprseries)[Yr%in%c(SYR:EYR)]$Enc_Catch,SSB_unfished=data.table(mods1[[i]]$derived_quants)[Label=="SSB_unfished"]$Value/sex,model=scen[i])
-    Pcatch[[i]]<-data.table(Yr=(CYR+1):EYR,Catch=data.table(mods1[[i]]$sprseries)[Yr%in%c((CYR+1):EYR)]$Enc_Catch,Catch_std=data.table(mods1[[i]]$stdtable)[name%like%"ForeCatch_"]$std[2:FCASTY+1], model=scen[i])
+    summ[[i]]<-data.table::data.table(Yr=SYR:EYR,TOT=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$Bio_all,SUMM=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$Bio_smry,SSB=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$SpawnBio/sex,std=data.table(mods1[[i]]$stdtable)[name%like%"SSB"][3:yr1,]$std/sex,F=data.table(mods1[[i]]$sprseries)[Yr%in%c(SYR:EYR)]$F_report,Catch=data.table(mods1[[i]]$sprseries)[Yr%in%c(SYR:EYR)]$Enc_Catch,SSB_unfished=data.table(mods1[[i]]$derived_quants)[Label=="SSB_unfished"]$Value/sex,model=scen[i])
+    Pcatch[[i]]<-data.table::data.table(Yr=(CYR+1):EYR,Catch=data.table(mods1[[i]]$sprseries)[Yr%in%c((CYR+1):EYR)]$Enc_Catch,Catch_std=data.table(mods1[[i]]$stdtable)[name%like%"ForeCatch_"]$std[2:FCASTY+1], model=scen[i])
     
   }
   
@@ -214,10 +207,12 @@ Do_AK_Scenarios<-function(DIR,CYR=2023,SYR=1991,FCASTY=13,SEXES=1,FLEETS=1,Scena
     
     ##SSB_Figures max(summ2$UCI)
     SS_ALL<-ggplot(summ2[model%in%unique(summ2$model)[1:10]],aes(x=Yr,y=SSB,color=model,linetype=model))+
-      geom_line()+theme_bw(base_size=16)+lims(y=c(0,0.6e5),x=c(CYR-1,EYR))+
+      geom_line()+
+      theme_bw(base_size=16)+lims(y=c(0,0.6e5),x=c(CYR-1,EYR))+
       scale_linetype_manual(values=c(rep(1,3),2:8),name="Scenarios")+
       scale_color_manual(values=c("dark green","orange","red",2:6,8,9),name="Scenarios")+
-      scale_size_manual(values=c(rep(1.5,3),rep(1,7)),name="Scenarios")+labs(y="Spawning biomass (t)",x="Year",title="Projections")
+      scale_size_manual(values=c(rep(1.5,3),rep(1,7)),name="Scenarios")+
+      labs(y="Spawning biomass (t)",x="Year",title="Projections")
     #max(summ2$UCI)
     SS_1<-ggplot(summ2[model%in%unique(summ2$model)[1:4]],aes(x=Yr,y=SSB,size=model,color=model,linetype=model,fill=model))+
       geom_line()+theme_bw(base_size=16)+lims(y=c(0,1e5),x=c(CYR-1,EYR))+
@@ -319,8 +314,27 @@ Do_AK_Scenarios<-function(DIR,CYR=2023,SYR=1991,FCASTY=13,SEXES=1,FLEETS=1,Scena
     output$FIGS=list(Figs_SSB,Figs_Catch)
   }
   
-  return(output)
-}
+  # return(output)
+  
+  write.csv(output$SSB,"SSB_scenarios.csv")
+  write.csv(output$CATCH,"CATCH_scenarios.csv")
+  write.csv(output$Tables$Catch,"TABLES_scenarios_Catch.csv")
+  write.csv(output$Tables$F,"TABLES_scenarios_F.csv")
+  write.csv(output$Tables$SSB,"TABLES_scenarios_SSB.csv")
+  write.csv(output$Two_year,"Two_Year_refpts_Model2.csv")
+  
+} ## end write_ak_scenarios
+
+
+new_forecast_mods <- list.dirs(here('2023','model_runs'), recursive = F)[grepl(list.dirs(here('2023','model_runs'), 
+                                                                                         recursive = F), 
+                                                                               pattern = '*M23*')] 
+profilesM23_0a<-Do_AK_Scenarios(DIR=Dir_M23_0ar,CYR=2023,SYR=1991,SEXES=1,FLEETS=c(1),Scenario2=1,S2_F=0.4,do_fig=TRUE)
+
+## set up and run all the scenarios (only need to run 1x)
+lapply(new_forecast_mods,Do_AK_Scenarios)
+
+## read scenarios from dir and write CSVs
 
 
 #profiles_19.12<-Do_AK_Scenarios(DIR="C:/WORKING_FOLDER/EBS_PCOD/2022_ASSESSMENT/NOVEMBER_MODELS/GRANT_MODELS/Model19_12/PROJ",CYR=2022,SYR=1977,SEXES=1,FLEETS=c(1),Scenario2=1,S2_F=0.4,do_fig=TRUE)

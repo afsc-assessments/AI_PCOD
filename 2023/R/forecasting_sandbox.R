@@ -51,6 +51,12 @@ SSplotComparisons(basemods, print = TRUE, png = T,plotdir = here('2023','figs','
 ## now I am going to copy the three november models into new folders and run all with the same
 # terminal forecast folder established previously.
 ## KIM the SAFE uses model 23.0b for the SAFE.
+list.dirs(here('2023','model_runs'), recursive = F)[grepl(list.dirs(here('2023','model_runs'), 
+                                                                                         recursive = F), 
+                                                                               pattern = '*-newforecast*')] %>%
+  
+  lapply(., FUN = function(x) SS_plots(SS_output(x)))
+
 
 new_forecast_mods <- list.dirs(here('2023','model_runs'), recursive = F)[grepl(list.dirs(here('2023','model_runs'), 
                                                                                          recursive = F), 
