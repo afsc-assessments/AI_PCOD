@@ -25,18 +25,28 @@ require(here)
 require(r4ss)
 
 
-Do_AK_Scenarios<-function(DIR,CYR=2023,SYR=1991,FCASTY=13,SEXES=1,FLEETS=1,Scenario2=1,S2_F=0.4,do_fig=TRUE){
+Do_AK_Scenarios<-function(DIR,
+                          CYR=2023,
+                          SYR=1991,
+                          FCASTY=13,
+                          SEXES=1,
+                          FLEETS=1,
+                          Scenario2=1, ## switch scenario 2 options, unclear if correct
+                          S2_F=0.4, ## SPRtarget for scenario 2; 0.4 is identical to scenario 1
+                          do_fig=TRUE){
   
- 
+  
   
   setwd(DIR) ## folder with converged model setwd(Dir_M23_0ar)
   
   scenario_1 <- SS_readforecast(file = "forecast.ss")
   
   R.utils::copyDirectory(DIR,paste0(DIR,"/scenario_1"),recursive=FALSE)
+  
+  
   scenario_1$Btarget   <- 0.4 ## this doesn't affect outcomes, just horizontal line on plot
-  # scenario_1$SPRtarget <- 0.4
-  # scenario_1$Flimitfraction <- 1.0
+  scenario_1$SPRtarget <- 0.4
+  scenario_1$Flimitfraction <- 1.0
   #scenario_1$Bmark_years[1:2]=c(1991,2023)#uses base M 0.404237
   # scenario_1$Bmark_years[1:2]=c(2004,2023)#
   #scenario_1$Fcast_years=rep(c(2021,2023),3)
@@ -95,10 +105,10 @@ Do_AK_Scenarios<-function(DIR,CYR=2023,SYR=1991,FCASTY=13,SEXES=1,FLEETS=1,Scena
   ## Fofl = F35% for all years
   scenario_6<-scenario_1
   R.utils::copyDirectory(getwd(),paste0(getwd(),"/scenario_6"),recursive=FALSE)
-  # scenario_6$Btarget   <- 0.35
+  scenario_6$Btarget   <- 0.35
   scenario_6$SPRtarget <- 0.35
   #scenario_4$BforconstantF <- 0.4
-  # scenario_6$Flimitfraction <- 1.0
+  scenario_6$Flimitfraction <- 1.0
   SS_writeforecast(scenario_6, dir = paste0(getwd(),"/scenario_6"), file = "forecast.ss", writeAll = TRUE, overwrite = TRUE)
   
   ## F40%=Fabc for 20&21 and Fofl for all further years
@@ -130,9 +140,17 @@ Do_AK_Scenarios<-function(DIR,CYR=2023,SYR=1991,FCASTY=13,SEXES=1,FLEETS=1,Scena
   
 } ## end do ak scenarios
 
-write_ak_scenarios <- function(DIR){
+write_ak_scenarios <- function(DIR, 
+                               CYR=2023,
+                               SYR=1991,
+                               FCASTY=13,
+                               SEXES=1,
+                               FLEETS=1,
+                               Scenario2=1, ## switch scenario 2 options, unclear if correct
+                               S2_F=0.4, ## SPRtarget for scenario 2; 0.4 is identical to scenario 1
+                               do_fig=TRUE){
   if(SEXES==1) sex=2
-#  if(SEXES>1) sex=1
+  #  if(SEXES>1) sex=1
   setwd(DIR)
   mods1<-SSgetoutput(dirvec=scen[1:8])
   
@@ -142,11 +160,34 @@ write_ak_scenarios <- function(DIR){
   EYR<- CYR+FCASTY
   yr1<- EYR-SYR+3
   
+
+
+  
   for(i in 1:8){
-    summ[[i]]<-data.table::data.table(Yr=SYR:EYR,TOT=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$Bio_all,SUMM=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$Bio_smry,SSB=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$SpawnBio/sex,std=data.table(mods1[[i]]$stdtable)[name%like%"SSB"][3:yr1,]$std/sex,F=data.table(mods1[[i]]$sprseries)[Yr%in%c(SYR:EYR)]$F_report,Catch=data.table(mods1[[i]]$sprseries)[Yr%in%c(SYR:EYR)]$Enc_Catch,SSB_unfished=data.table(mods1[[i]]$derived_quants)[Label=="SSB_unfished"]$Value/sex,model=scen[i])
+    summ[[i]]<-data.table::data.table(Yr=SYR:EYR,
+                                      TOT=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$Bio_all,
+                                      SUMM=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$Bio_smry,
+                                      SSB=data.table(mods1[[i]]$timeseries)[Yr%in%c(SYR:EYR)]$SpawnBio/sex,
+                                      std=data.table(mods1[[i]]$stdtable)[name%like%"SSB"][3:yr1,]$std/sex,
+                                      F=data.table(mods1[[i]]$sprseries)[Yr%in%c(SYR:EYR)]$F_report,
+                                      Catch=data.table(mods1[[i]]$sprseries)[Yr%in%c(SYR:EYR)]$Enc_Catch,
+                                      SSB_unfished=data.table(mods1[[i]]$derived_quants)[Label=="SSB_unfished"]$Value/sex,
+                                      model=scen[i])
     Pcatch[[i]]<-data.table::data.table(Yr=(CYR+1):EYR,Catch=data.table(mods1[[i]]$sprseries)[Yr%in%c((CYR+1):EYR)]$Enc_Catch,Catch_std=data.table(mods1[[i]]$stdtable)[name%like%"ForeCatch_"]$std[2:FCASTY+1], model=scen[i])
     
   }
+  
+  ## corrected unfished calculation
+  ## this should be mean recruitment during regime x SPR_fX
+  ## not sure if it's true mean or mean given devs
+  # mean_recruitment <- mean(data.table(mods1[[1]]$recruit)[Yr%in%c(SYR:EYR)]$exp_recr) 
+  # mean_recruitment <- mean(data.table(mods1[[1]]$recruit)[Yr%in%c(SYR:EYR)]$pred_recr) 
+  
+  ## In Scenario 1, the derived quants are as follows
+  # SSB_Btgt is 2x b35; b
+  
+  
+  # mods1[[1]]$derived_quants[grep('SPR',mods1[[1]]$derived_quants$Label),]
   
   summ8<-data.table(Yr=SYR:EYR,TOT=data.table(mods1[[8]]$timeseries)[Yr%in%c(SYR:EYR)]$Bio_all,SUMM=data.table(mods1[[8]]$timeseries)[Yr%in%c(SYR:EYR)]$Bio_smry,SSB=data.table(mods1[[8]]$timeseries)[Yr%in%c(SYR:EYR)]$SpawnBio/sex,std=data.table(mods1[[8]]$stdtable)[name%like%"SSB"][3:yr1,]$std/sex,F=data.table(mods1[[8]]$sprseries)[Yr%in%c(SYR:EYR)]$F_report,Catch=data.table(mods1[[8]]$sprseries)[Yr%in%c(SYR:EYR)]$Enc_Catch,SSB_unfished=data.table(mods1[[8]]$derived_quants)[Label=="SSB_unfished"]$Value/sex,model=scen[8])
   Pcatch8<-data.table(Yr=(CYR+1):EYR,Catch=data.table(mods1[[8]]$sprseries)[Yr%in%c((CYR+1):EYR)]$Enc_Catch,Catch_std=data.table(mods1[[8]]$stdtable)[name%like%"ForeCatch_"]$std[1:FCASTY], model=scen[8])
@@ -325,11 +366,11 @@ write_ak_scenarios <- function(DIR){
   
 } ## end write_ak_scenarios
 
-
-new_forecast_mods <- list.dirs(here('2023','model_runs'), recursive = F)[grepl(list.dirs(here('2023','model_runs'), 
+## directory names of all models
+new_forecast_mods <- list.dirs(here('2023','model_runs'), 
+                               recursive = F)[grepl(list.dirs(here('2023','model_runs'), 
                                                                                          recursive = F), 
-                                                                               pattern = '*M23*')] 
-profilesM23_0a<-Do_AK_Scenarios(DIR=Dir_M23_0ar,CYR=2023,SYR=1991,SEXES=1,FLEETS=c(1),Scenario2=1,S2_F=0.4,do_fig=TRUE)
+                                                                               pattern = 'M23.0c')] 
 
 ## set up and run all the scenarios (only need to run 1x)
 lapply(new_forecast_mods,Do_AK_Scenarios)
