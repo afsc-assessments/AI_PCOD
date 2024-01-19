@@ -1,14 +1,14 @@
 #C forecast file written by R function SS_writeforecast
 #C rerun model to get more complete formatting in forecast.ss_new
 #C should work with SS version: 3.3
-#C file write time: 2023-11-20 10:24:38.305836
+#C file write time: 2023-11-20 15:41:03.745752
 #
 1 #_benchmarks
 1 #_MSY
 0.75 #_SPRtarget
-0.4 #_Btarget
+0.75 #_Btarget
 #_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF,  beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)
-1991 2019 1991 2019 1991 2021 1991 2019 1991 2019
+2004 2023 1991 2019 1991 2021 1991 2019 1991 2019
 1 #_Bmark_relF_Basis
 1 #_Forecast
 15 #_Nforecastyrs

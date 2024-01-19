@@ -18,7 +18,7 @@
 0 # Forecast selectivity (0=fcast selex is mean from year range; 1=fcast selectivity from annual time-vary parms)
 2 # Control rule method (1: ramp does catch=f(SSB), buffer on F; 2: ramp does F=f(SSB), buffer on F; 3: ramp does catch=f(SSB), buffer on catch; 4: ramp does F=f(SSB), buffer on catch) 
 0.4 # Control rule Biomass level for constant F (as frac of Bzero, e.g. 0.40); (Must be > the no F level below) 
-0.175 # Control rule Biomass level for no F (as frac of Bzero, e.g. 0.10) 
+0.02 # Control rule Biomass level for no F (as frac of Bzero, e.g. 0.10) 
 1 # Control rule target as fraction of Flimit (e.g. 0.75), negative value invokes list of [year, scalar] with filling from year to YrMax 
 3 #_N_forecast_loops
 3 #_First_forecast_loop_with_stochastic_recruitment
