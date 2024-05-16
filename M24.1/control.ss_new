@@ -247,7 +247,7 @@
              5             8       6.21391             0             0             0          2          0          0          0          0          0          0          0  #  Size_DblN_ascend_se_Srv(2)
              2            10             6             6             1             0         -2          0          0          0          0          0          0          0  #  Size_DblN_descend_se_Srv(2)
            -10            -7           -10           -10             0             0         -3          0          0          0          0          0          0          0  #  Size_DblN_start_logit_Srv(2)
-            -7             2             1             1             1             0         -2          0          0          0          0          0          0          0  #  Size_DblN_end_logit_Srv(2)
+            0.5           2.5            2             2             0             0         -2          0          0          0          0          0          0          0  #  Size_DblN_end_logit_Srv(2)
 # 1   FshComb AgeSelex
 # 2   Srv AgeSelex
 #_No_Dirichlet parameters
