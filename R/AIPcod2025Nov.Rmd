@@ -1,0 +1,137 @@
+---
+title: "2A. Assessment of the Pacific cod stock in the Aleutian Islands"
+output:
+  pdf_document:
+    fig_caption: true
+  word_document: default
+---
+
+---
+header-includes:
+ \usepackage{booktabs}
+ \usepackage{float}
+ \usepackage{graphicx}
+ \usepackage{subcaption} 
+
+
+
+geometry:
+  left=1in,right=1in,top=1in,bottom=1in
+
+---
+
+
+\begin{centering}
+\fontfamily{cmr}
+\fontsize{10}{12}
+  Ingrid Spies, Steve Barbeaux, Melissa Haltuch, Pete Hulson, Ivonne Ortiz, Laura Spencer, and Sandra Lowe \\
+\selectfont
+  Alaska Fisheries Science Center, National Marine Fisheries Service \\
+  National Oceanic and Atmospheric Administration \\ 
+  7600 Sand Point Way NE., Seattle, WA 98115-6349 \\
+  {`r format(Sys.time(), '%d %B, %Y')`}\\
+  
+  \includegraphics[width=1.5in,angle=0,origin=c]{/Users/ingrid.spies/Documents/AI_PCOD/2024/data/qrcode_github.com.png}
+
+\end{centering}
+
+
+This report may be cited as:
+Spies, I., Barbeaux, S., Haltuch, M., Hulson, P., Ortiz, I., Spencer, L., and Lowe, S. 2025. Assessment of the Pacific cod stock\ in the Aleutian Islands. North Pacific Fishery Management Council, Anchorage, AK. Available from https://www.npfmc.org/library/safe-reports/.
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(kableExtra)
+library(stringr)
+library(sjlabelled)
+library(sjmisc)
+library(r4ss)
+library(data.table)
+library(sizeMat)
+library(ggthemes)
+library(plotrix)
+library(reshape2)
+library(dplyr)
+library(png)
+library(grid)
+library(gridExtra)
+library(devtools)
+library(readr)
+library(captioner)
+
+#install.packages("/Users/ingrid.spies/Documents/AI_PCOD/2025/R/captioner_2.2.3.tar.gz", repos = NULL, type = "source")
+
+knitr::opts_chunk$set(fig.align = 'left')
+
+knitr::opts_chunk$set(fig.pos = 'H')
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, cache=FALSE,results="asis")
+
+f.ref <- function(x) {
+  stringr::str_extract(table_nums(x), "[^:]*")
+}
+
+table_nums <- captioner::captioner(prefix = "Table 2A.",levels=1,auto_space = FALSE)
+figure_nums <- captioner::captioner(prefix="Figure 2A.",levels = 1, auto_space = FALSE)
+
+thisyr    = 2025
+lastyr    = thisyr-1
+nextyr    = thisyr+1
+
+#AKFIN under Observer reports 8/11/2025
+AI_len_fish=read.csv("/Users/ingrid.spies/Documents/WorkDellStuff/Assessments/AI_Cod/2025/norpac_length_report_AI_Pcod_8_11_2025.csv",header=TRUE)
+
+#Needed a special query for data from 1991 and 1992
+cat9192=read.csv("/Users/ingrid.spies/Documents/WorkDellStuff/Assessments/AI_Cod/2024/AIcod_catch_1991_1992.csv",header=TRUE)
+
+catchLOC=read.csv("/Users/ingrid.spies/Documents/WorkDellStuff/Assessments/AI_Cod/2025/Spies - AI Pcod NORPAC_8_11_25.csv",header=TRUE)
+
+#by full months
+Num_months=sum(catchLOC$EXTRAPOLATED_WEIGHT[which(catchLOC$MONTH<8&catchLOC$YEAR>2019&catchLOC$YEAR<2025)])
+
+Num_Aug=sum(catchLOC$EXTRAPOLATED_WEIGHT[which(catchLOC$MONTH==8&catchLOC$DAY<12&catchLOC$YEAR>2020&catchLOC$YEAR<2025)])
+
+#Just in September
+Denom_months=sum(catchLOC$EXTRAPOLATED_WEIGHT[which(catchLOC$YEAR>2019&catchLOC$YEAR<2025)])
+
+prop=(Num_months+Num_Aug)/(Denom_months)
+
+cat25=read.csv("/Users/ingrid.spies/Documents/WorkDellStuff/Assessments/AI_Cod/2025/GroundfishTotalCatch_AICod_8_11_25.csv",header=TRUE)
+
+yrs=as.numeric(names(table(cat25$Year)))
+cat25AI=vector();
+cat25trw=vector();
+cat25llpot=vector();
+cat25ll=vector();
+cat25pot=vector();
+cat25other=vector();
+for(i in 1:length(yrs)){
+  cat25AI[i]=sum(cat25$Catch..mt.[which(cat25$Year==yrs[i])])
+  cat25trw[i]=sum(cat25$Catch..mt.[which(cat25$Year==yrs[i]&cat25$Gear%in%c("BTR","NPT","PTR","TRW"))])
+  cat25llpot[i]=sum(cat25$Catch..mt.[which(cat25$Year==yrs[i]&cat25$Gear%in%c("HAL","POT"))])
+  cat25ll[i]=sum(cat25$Catch..mt.[which(cat25$Year==yrs[i]&cat25$Gear%in%c("HAL"))])
+  cat25pot[i]=sum(cat25$Catch..mt.[which(cat25$Year==yrs[i]&cat25$Gear%in%c("POT"))])
+  cat25other[i]=sum(cat25$Catch..mt.[which(cat25$Year==yrs[i]&cat25$Gear%in%c("GIL","JIG","OTH"))])
+}
+cat25AI[35]/prop#5132.103t is the total estimate for 2024. Prop=0.7633 as ofSept 22
+cat25AI[35]#Total for 2024 as of end of Sept
+cat25trw[35]/prop#3419.545
+cat25ll[35]/prop#46.20484
+cat25pot[35]/prop#4432.612
+cat25other[35]
+GTC=cbind(cat25trw,cat25ll,cat25pot,cat25other,cat25AI)
+colnames(GTC)=c("Trawl","Longline","Pot","Other","Total")
+write.csv(GTC,"/Users/ingrid.spies/Documents/WorkDellStuff/Assessments/AI_Cod/2025/GTC.csv")
+
+fish_catch=read.csv("/Users/ingrid.spies/Documents/WorkDellStuff/Assessments/AI_Cod/2025/GTC.csv",header=TRUE)
+
+#SS3 models
+Dir_M24_1=("/Users/ingrid.spies/Documents/AI_PCOD/2025/Models/M24_1_data/run")
+M24_1 <- SS_output(Dir_M24_1)
+
+
+
+
+```
